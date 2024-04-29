@@ -123,7 +123,7 @@ public class ChatServer {
                     rooms.put(createRoomId, new HashSet<>());
                     rooms.get(createRoomId).add(id);
                     clientChatRooms.put(id, createRoomId);
-                    out.println(createRoomId + "번 방이 생성되었습니다.");
+                    System.out.println(createRoomId + "번 방이 생성되었습니다.");
                     out.println(createRoomId + "번 방에 입장하였습니다.");
                 } else {
                     out.println("이미 방에 입장해 있기 때문에 방을 생성할 수 없습니다.");
@@ -134,7 +134,7 @@ public class ChatServer {
         private void joinRoom(String message) {
             synchronized (rooms) {
                 Integer roomId = clientChatRooms.get(id);
-                if (roomId == null) { // 사용자가 어떤 방에도 들어가 있지 않은 경우에만 실행
+                if (roomId == null) {
                     String[] parts = message.split("\\s+");
                     try {
                         roomId = Integer.parseInt(parts[1]);
@@ -142,7 +142,7 @@ public class ChatServer {
                             rooms.get(roomId).add(id);
                             clientChatRooms.put(id, roomId);
                             out.println(roomId + "번 방에 입장하였습니다.");
-                            broadcast(id + "님이 " + roomId + "번 방에 입장하였습니다."); // 사용자 입장 알림을 전체에게 브로드캐스트
+                            broadcast(id + "님이 방에 입장하였습니다.");
                         } else {
                             out.println(roomId + "번 방을 찾을 수 없습니다.");
                         }
@@ -164,9 +164,15 @@ public class ChatServer {
                 roomMembers.remove(id);
                 clientChatRooms.remove(id);
                 out.println(roomId + "번 방에서 퇴장하였습니다.");
-                broadcast(id + "님이 방에서 퇴장하였습니다.");
+                for (String memberId : roomMembers) {
+                    PrintWriter pw = clients.get(memberId);
+                    if (pw != null) {
+                        pw.println(id + "님이 방에서 퇴장하였습니다.");
+                    }
+                }
                 if (roomMembers.isEmpty()) {
                     rooms.remove(roomId);
+                    System.out.println(roomId + "번 방이 삭제되었습니다.");
                 }
             }
         }
