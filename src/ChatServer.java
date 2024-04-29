@@ -142,7 +142,15 @@ public class ChatServer {
                             rooms.get(roomId).add(id);
                             clientChatRooms.put(id, roomId);
                             out.println(roomId + "번 방에 입장하였습니다.");
-                            broadcast(id + "님이 방에 입장하였습니다.");
+                            Set<String> roomMembers = rooms.get(roomId);
+                            for (String memberId : roomMembers) {
+                                if (!memberId.equals(id)) {
+                                    PrintWriter pw = clients.get(memberId);
+                                    if (pw != null) {
+                                        pw.println(id + "님이 방에 입장하였습니다.");
+                                    }
+                                }
+                            }
                         } else {
                             out.println(roomId + "번 방을 찾을 수 없습니다.");
                         }
