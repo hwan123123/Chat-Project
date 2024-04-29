@@ -54,6 +54,8 @@ public class ChatServer {
                 broadcast(id + " 닉네임의 사용자가 입장했습니다.");
                 System.out.println(id + "'s IpAddress : " + socket.getInetAddress());
 
+                commandList();
+
                 String message;
                 while ((message = in.readLine()) != null) {
                     if (message.equals("/bye")) {
@@ -228,6 +230,18 @@ public class ChatServer {
                     }
                 }
             }
+        }
+
+        private void commandList() {
+            out.println("==============================================");
+            out.println("방 목록 보기 : /list");
+            out.println("방 생성 : /create");
+            out.println("방 입장 : /join [방번호]");
+            out.println("방 나가기 : /exit");
+            out.println("접속 중인 사용자 목록 보기 : /users");
+            out.println("현재 방에 있는 사용자 목록 보기 : /roomusers");
+            out.println("접속 종료 : /bye");
+            out.println("==============================================");
         }
     }
 }
